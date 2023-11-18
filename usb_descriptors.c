@@ -105,8 +105,8 @@ extern char serial[];
 // array of pointer to string descriptors
 char const *string_desc_arr[] = {
     (const char[]){ 0x09, 0x04 }, // 0: is supported language is English (0x0409)
-    "Pico",                       // 1: Manufacturer
-    "USB-ROM",                    // 2: Product
+    "github.com/sergev/usb-rom",  // 1: Manufacturer
+    "USB-ROM Drive",              // 2: Product
     serial,                       // 3: Serials will use unique ID if possible
 };
 
