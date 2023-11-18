@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Create filesystem image
+# Create FAT12 filesystem image on MacOS
 #
 if [ $# != 2 ]; then
     echo "Usage: $0 volname dir"
@@ -44,5 +44,6 @@ sync
 # Detach the image
 hdiutil detach $disk
 
-# Write image to RP2040 Flash memory.
-# picotool load -n filesys.img -t bin -o 0x10010000
+echo "Use the following command to write image to RP2040 Flash memory:"
+echo
+echo "    picotool load -n filesys.img -t bin -o 0x10010000"
