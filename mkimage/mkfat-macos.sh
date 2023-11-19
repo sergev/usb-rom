@@ -12,7 +12,7 @@ contents="$2"
 oem="MSWIN4.1"
 
 size_kbytes=$((2048 - 64))
-set -x
+#set -x
 
 echo "Disk size = $size_kbytes kbytes"
 
