@@ -29,11 +29,13 @@
 // whether host does safe-eject
 static bool ejected = false;
 
+// For 2Mbyte Flash chip, disk size is 3968 blocks, or 1984 kbytes.
+// For 16Mbyte Flash chip, disk size is 32640 blocks, or 16320 kbytes.
 enum {
     DISK_BASE       = 0x10010000, // Base address of Flash memory for disk
-    DISK_LIMIT      = 0x10200000, // Up to 2 Mbytes
+    DISK_LIMIT      = 0x10000000 + PICO_FLASH_SIZE_BYTES,
     DISK_BLOCK_SIZE = 512,
-    DISK_BLOCK_NUM  = (DISK_LIMIT - DISK_BASE) / DISK_BLOCK_SIZE, // 3968 blocks, or 1984 kbytes
+    DISK_BLOCK_NUM  = (DISK_LIMIT - DISK_BASE) / DISK_BLOCK_SIZE,
 };
 
 // Invoked when received SCSI_CMD_INQUIRY

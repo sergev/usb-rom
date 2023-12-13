@@ -25,6 +25,14 @@
  */
 #include "tusb.h"
 
+// String Descriptor Index
+enum {
+    STRID_LANGID = 0,
+    STRID_MANUFACTURER,
+    STRID_PRODUCT,
+    STRID_SERIAL,
+};
+
 //--------------------------------------------------------------------+
 // Device Descriptors
 //--------------------------------------------------------------------+
@@ -44,9 +52,9 @@ tusb_desc_device_t const desc_device = {
     .idProduct = 0x0000, // TODO
     .bcdDevice = 0x0100,
 
-    .iManufacturer = 0x01,
-    .iProduct = 0x02,
-    .iSerialNumber = 0x03,
+    .iManufacturer = STRID_MANUFACTURER,
+    .iProduct = STRID_PRODUCT,
+    .iSerialNumber = STRID_SERIAL,
 
     .bNumConfigurations = 0x01
 };
@@ -90,14 +98,6 @@ uint8_t const *tud_descriptor_configuration_cb(uint8_t index)
 //--------------------------------------------------------------------+
 // String Descriptors
 //--------------------------------------------------------------------+
-
-// String Descriptor Index
-enum {
-    STRID_LANGID = 0,
-    STRID_MANUFACTURER,
-    STRID_PRODUCT,
-    STRID_SERIAL,
-};
 
 // buffer to hold flash ID
 extern char serial[];

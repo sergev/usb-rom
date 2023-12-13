@@ -49,14 +49,16 @@ int main(void)
     board_init();
     pico_get_unique_board_id_string(serial, sizeof(serial));
 
-    // WS2812 LED on rp2040-zero connected to GP16 pin.
-    const unsigned WS2812_PIN = 16;
+    //
+    // A pin, to which WS2812 LED is connected,
+    // is defined in the board description file.
+    //
     const bool IS_RGBW = false;
     const unsigned SM = 0;
     const float FREQ = 800000;
     const unsigned offset = pio_add_program(pio0, &ws2812_program);
 
-    ws2812_program_init(pio0, SM, offset, WS2812_PIN, FREQ, IS_RGBW);
+    ws2812_program_init(pio0, SM, offset, PICO_DEFAULT_WS2812_PIN, FREQ, IS_RGBW);
 
     unsigned prev_color = 0;
     pio_sm_put_blocking(pio0, 0, 0);
