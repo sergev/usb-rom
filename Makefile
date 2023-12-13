@@ -7,6 +7,12 @@
 # make clean    -- remove build files
 #
 
+#
+# Select board from the pico-sdk list
+#
+#PICO_BOARD  = waveshare_rp2040_zero
+PICO_BOARD  = vccgnd_yd_rp2040
+
 all:    build
 	$(MAKE) -C build $@
 
@@ -20,4 +26,4 @@ clean:
 
 # Configure for build
 build:
-	cmake -B $@ .
+	cmake -B $@ -D PICO_BOARD=$(PICO_BOARD) .

@@ -19,7 +19,18 @@ add_compile_options(-Wall
 add_compile_definitions(PICO_FLASH_SPI_CLKDIV=4)
 
 # Initialize the SDK
-set(PICO_BOARD waveshare_rp2040_zero)
+set(PICO_BOARD_HEADER_DIRS ${CMAKE_SOURCE_DIR}/boards)
+if (DEFINED ENV{PICO_BOARD})
+    set(PICO_BOARD $ENV{PICO_BOARD})
+    message("Using PICO_BOARD from environment ('${PICO_BOARD}')")
+else()
+    if (NOT PICO_BOARD)
+        set(PICO_BOARD "waveshare_rp2040_zero")
+        pico_message("Defaulting PICO target board to ${PICO_BOARD} since not specified.")
+    else()
+        message("PICO target board is ${PICO_BOARD}.")
+    endif()
+endif()
 pico_sdk_init()
 
 add_executable(${PROJECT_NAME}
