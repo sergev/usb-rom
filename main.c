@@ -31,6 +31,7 @@
 #include "pico/unique_id.h"
 #include "hardware/pio.h"
 #include "ws2812.pio.h"
+#include "extern.h"
 
 //
 // Colors.
@@ -45,10 +46,15 @@ enum {
     COLOR_GREEN  = 0x000f0000, // green 6%
     COLOR_BLUE   = 0x00000f00, // blue 6%
 #endif
+    COLOR_BLACK  = 0x00000000, // black
+    COLOR_WHITE  = 0x01010100, // white
 };
 
 // buffer to hold flash ID
 char serial[2 * PICO_UNIQUE_BOARD_ID_SIZE_BYTES + 1];
+
+// true when got USB request
+bool activity_flag;
 
 int main(void)
 {
@@ -72,18 +78,25 @@ int main(void)
 
     tud_init(BOARD_TUD_RHPORT);
 
+    //TODO: add_repeating_timer_ms (int32_t delay_ms, repeating_timer_callback_t callback, void *user_data, repeating_timer_t *out)
+
     while (1) {
         // TinyUSB device task.
         tud_task();
 
         // LED color depends on USB state.
         unsigned led_color = prev_color;
-        if (tud_suspended()) {
+        if (activity_flag) {
+            led_color = COLOR_BLACK;
+            activity_flag = false;
+        } else if (tud_suspended()) {
             led_color = COLOR_BLUE;
         } else if (tud_mounted()) {
             led_color = COLOR_GREEN;
         } else if (tud_connected()) {
             led_color = COLOR_RED;
+        } else {
+            led_color = COLOR_WHITE;
         }
 
         // Update LED color.

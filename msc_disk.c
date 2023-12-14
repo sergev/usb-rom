@@ -25,6 +25,7 @@
  */
 #include "bsp/board.h"
 #include "tusb.h"
+#include "extern.h"
 
 // whether host does safe-eject
 static bool ejected = false;
@@ -115,6 +116,7 @@ int32_t tud_msc_read10_cb(uint8_t lun, uint32_t lba, uint32_t offset, void *buff
     uint8_t const *addr = (uint8_t const *)DISK_BASE + (lba * DISK_BLOCK_SIZE) + offset;
     memcpy(buffer, addr, bufsize);
 
+    activity_flag = true;
     return (int32_t)bufsize;
 }
 

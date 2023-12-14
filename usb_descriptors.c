@@ -24,6 +24,7 @@
  *
  */
 #include "tusb.h"
+#include "extern.h"
 
 // String Descriptor Index
 enum {
@@ -98,9 +99,6 @@ uint8_t const *tud_descriptor_configuration_cb(uint8_t index)
 //--------------------------------------------------------------------+
 // String Descriptors
 //--------------------------------------------------------------------+
-
-// buffer to hold flash ID
-extern char serial[];
 
 // array of pointer to string descriptors
 char const *string_desc_arr[] = {
