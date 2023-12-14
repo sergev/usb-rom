@@ -36,9 +36,15 @@
 // Colors.
 //
 enum {
+#ifdef VCCGND_YD_RP2040
+    COLOR_RED    = 0x00070000, // red 3%
+    COLOR_GREEN  = 0x03000000, // green 1%
+    COLOR_BLUE   = 0x00000700, // blue 3%
+#else
     COLOR_RED    = 0x0f000000, // red 6%
     COLOR_GREEN  = 0x000f0000, // green 6%
     COLOR_BLUE   = 0x00000f00, // blue 6%
+#endif
 };
 
 // buffer to hold flash ID
