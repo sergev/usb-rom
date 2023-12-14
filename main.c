@@ -47,7 +47,6 @@ enum {
     COLOR_BLUE   = 0x00000f00, // blue 6%
 #endif
     COLOR_BLACK  = 0x00000000, // black
-    COLOR_WHITE  = 0x01010100, // white
 };
 
 // buffer to hold flash ID
@@ -56,11 +55,42 @@ char serial[2 * PICO_UNIQUE_BOARD_ID_SIZE_BYTES + 1];
 // true when got USB request
 bool activity_flag;
 
+bool update_led(repeating_timer_t *timer)
+{
+#ifdef PICO_DEFAULT_WS2812_PIN
+    static unsigned prev_color = 0;
+
+    // LED color depends on USB state.
+    unsigned led_color = prev_color;
+    if (activity_flag && led_color != COLOR_BLACK) {
+        led_color = COLOR_BLACK;
+        activity_flag = false;
+    } else if (tud_suspended()) {
+        led_color = COLOR_BLUE;
+    } else if (tud_mounted()) {
+        led_color = COLOR_GREEN;
+    } else if (tud_connected()) {
+        led_color = COLOR_RED;
+    }
+
+    // Update LED color.
+    if (led_color != prev_color) {
+        pio_sm_put_blocking(pio0, 0, led_color);
+        prev_color = led_color;
+    }
+#endif
+#ifdef PICO_DEFAULT_LED_PIN
+    // TODO: implement regular LED
+#endif
+    return true;
+}
+
 int main(void)
 {
     board_init();
     pico_get_unique_board_id_string(serial, sizeof(serial));
 
+#ifdef PICO_DEFAULT_WS2812_PIN
     //
     // A pin, to which WS2812 LED is connected,
     // is defined in the board description file.
@@ -71,38 +101,19 @@ int main(void)
     const unsigned offset = pio_add_program(pio0, &ws2812_program);
 
     ws2812_program_init(pio0, SM, offset, PICO_DEFAULT_WS2812_PIN, FREQ, IS_RGBW);
-
-    unsigned prev_color = 0;
     pio_sm_put_blocking(pio0, 0, 0);
     sleep_ms(250);
+#endif
 
+    // Call LED routine periodically.
+    repeating_timer_t timer;
+    add_repeating_timer_ms(100, update_led, NULL, &timer);
+
+    // Initialize USB port in device mode.
     tud_init(BOARD_TUD_RHPORT);
-
-    //TODO: add_repeating_timer_ms (int32_t delay_ms, repeating_timer_callback_t callback, void *user_data, repeating_timer_t *out)
 
     while (1) {
         // TinyUSB device task.
         tud_task();
-
-        // LED color depends on USB state.
-        unsigned led_color = prev_color;
-        if (activity_flag) {
-            led_color = COLOR_BLACK;
-            activity_flag = false;
-        } else if (tud_suspended()) {
-            led_color = COLOR_BLUE;
-        } else if (tud_mounted()) {
-            led_color = COLOR_GREEN;
-        } else if (tud_connected()) {
-            led_color = COLOR_RED;
-        } else {
-            led_color = COLOR_WHITE;
-        }
-
-        // Update LED color.
-        if (led_color != prev_color) {
-            pio_sm_put_blocking(pio0, 0, led_color);
-            prev_color = led_color;
-        }
     }
 }
